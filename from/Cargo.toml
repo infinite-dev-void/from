@@ -1,0 +1,16 @@
+[package]
+name = "from"
+version = "0.1.1"
+edition = "2021"
+description = "A procedural macro that generates custom parsing and validation code"
+authors = ["Marwan Hilal <marwan.hilal.dev@gmail.com>"]
+rust-version = "1.61"
+repository = "https://github.com/infinite-dev-void/from"
+license-file = "LICENSE"
+keywords = ["parser", "validator"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+from_proc = "0.1.1"
+loop-code = "0.5.2"
