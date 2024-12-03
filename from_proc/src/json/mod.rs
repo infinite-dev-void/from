@@ -63,12 +63,29 @@ impl FromJsonValueImpl {
         &mut self,
         missing_field_check: custom_types::MissingFieldCheck,
     ) {
-        self.none.add_missing_field_check(missing_field_check.none);
-        self.lang.add_missing_field_check(missing_field_check.lang);
+        self.none
+            .add_missing_field_check(missing_field_check.none.check);
+        if self.none.required_field_errs.len() == 0 {
+            self.none
+                .add_required_field_err(missing_field_check.none.err);
+        };
+
+        self.lang
+            .add_missing_field_check(missing_field_check.lang.check);
+        if self.lang.required_field_errs.len() == 0 {
+            self.lang
+                .add_required_field_err(missing_field_check.lang.err);
+        };
+
         self.stack_errs
-            .add_missing_field_check(missing_field_check.stack_errs);
+            .add_missing_field_check(missing_field_check.stack_errs.check);
+        self.stack_errs
+            .add_required_field_err(missing_field_check.stack_errs.err);
+
         self.stack_errs_lang
-            .add_missing_field_check(missing_field_check.stack_errs_lang);
+            .add_missing_field_check(missing_field_check.stack_errs_lang.check);
+        self.stack_errs_lang
+            .add_required_field_err(missing_field_check.stack_errs_lang.err);
     }
 
     #[inline(always)]
@@ -108,11 +125,26 @@ impl FromJsonValueImpl {
 #[inline]
 fn construct_from_json_value_method(var_segs: VariableParseSegments) -> TokenStream2 {
     let VariableParseSegments {
+        required_field_errs,
         field_var_defs,
         field_parsing_arms,
         missing_field_checks,
         field_assignments,
     } = var_segs;
+
+    let empty_handling = if required_field_errs.len() > 0 {
+        let required_field_errs = required_field_errs.join(quote! {,});
+
+        quote! {
+            return Err(From::from(#required_field_errs));
+        }
+    } else {
+        quote! {
+            return Ok(Self {
+                #field_assignments
+            });
+        }
+    };
 
     quote! {
         fn from_json_value(json: &[u8], idx: &mut usize, path: &::from::Path) -> Result<Self, ::from::Err> {
@@ -126,12 +158,10 @@ fn construct_from_json_value_method(var_segs: VariableParseSegments) -> TokenStr
             #field_var_defs
 
             if byte.eq(&b'}') {
-                #missing_field_checks
-
-                return Ok(Self {
-                    #field_assignments
-                })
+                #empty_handling
             };
+
+
 
             let mut prop;
 
@@ -182,11 +212,26 @@ fn construct_from_json_value_method(var_segs: VariableParseSegments) -> TokenStr
 #[inline]
 fn construct_from_json_value_lang_method(var_segs: VariableParseSegments) -> TokenStream2 {
     let VariableParseSegments {
+        required_field_errs,
         field_var_defs,
         field_parsing_arms,
         missing_field_checks,
         field_assignments,
     } = var_segs;
+
+    let empty_handling = if required_field_errs.len() > 0 {
+        let required_field_errs = required_field_errs.join(quote! {,});
+
+        quote! {
+            return Err(From::from(#required_field_errs));
+        }
+    } else {
+        quote! {
+            return Ok(Self {
+                #field_assignments
+            });
+        }
+    };
 
     quote! {
         fn from_json_value_lang(json: &[u8], idx: &mut usize, path: &::from::Path, lang: &str) -> Result<Self, ::from::Err>{
@@ -199,11 +244,7 @@ fn construct_from_json_value_lang_method(var_segs: VariableParseSegments) -> Tok
             #field_var_defs
 
             if byte.eq(&b'}') {
-                #missing_field_checks
-
-                return Ok(Self {
-                    #field_assignments
-                })
+                #empty_handling
             };
 
             let mut prop;
@@ -255,11 +296,26 @@ fn construct_from_json_value_lang_method(var_segs: VariableParseSegments) -> Tok
 #[inline]
 fn construct_from_json_value_stack_errs_method(var_segs: VariableParseSegments) -> TokenStream2 {
     let VariableParseSegments {
+        required_field_errs,
         field_var_defs,
         field_parsing_arms,
         missing_field_checks,
         field_assignments,
     } = var_segs;
+
+    let empty_handling = if required_field_errs.len() > 0 {
+        let required_field_errs = required_field_errs.join(quote! {,});
+
+        quote! {
+            return Err(::from::Errs::ValidationErrs(vec![#required_field_errs]));
+        }
+    } else {
+        quote! {
+            return Ok(Self {
+                #field_assignments
+            });
+        }
+    };
 
     quote! {
         fn from_json_value_stack_errs(json: &[u8], idx: &mut usize, path: &::from::Path) -> Result<Self, ::from::Errs>{
@@ -271,19 +327,12 @@ fn construct_from_json_value_stack_errs_method(var_segs: VariableParseSegments) 
 
             #field_var_defs
 
-            let mut errs = Vec::<::from::ValidationErr>::new();
 
             if byte.eq(&b'}') {
-                #missing_field_checks
-
-                if errs.len() > 0 {
-                    return Err(::from::Errs::ValidationErrs(errs));
-                };
-
-                return Ok(Self {
-                    #field_assignments
-                })
+                #empty_handling
             };
+
+            let mut errs = Vec::<::from::ValidationErr>::new();
 
             let mut prop;
 
@@ -339,11 +388,26 @@ fn construct_from_json_value_stack_errs_lang_method(
     var_segs: VariableParseSegments,
 ) -> TokenStream2 {
     let VariableParseSegments {
+        required_field_errs,
         field_var_defs,
         field_parsing_arms,
         missing_field_checks,
         field_assignments,
     } = var_segs;
+
+    let empty_handling = if required_field_errs.len() > 0 {
+        let required_field_errs = required_field_errs.join(quote! {,});
+
+        quote! {
+            return Err(::from::Errs::ValidationErrs(vec![#required_field_errs]));
+        }
+    } else {
+        quote! {
+            return Ok(Self {
+                #field_assignments
+            });
+        }
+    };
 
     quote! {
         fn from_json_value_stack_errs_lang(json: &[u8], idx: &mut usize, path: &::from::Path, lang: &str) -> Result<Self, ::from::Errs> {
@@ -355,19 +419,12 @@ fn construct_from_json_value_stack_errs_lang_method(
 
             #field_var_defs
 
-            let mut errs = Vec::<::from::ValidationErr>::new();
 
             if byte.eq(&b'}') {
-                #missing_field_checks
-
-                if errs.len() > 0 {
-                    return Err(::from::Errs::ValidationErrs(errs));
-                };
-
-                return Ok(Self {
-                    #field_assignments
-                })
+                #empty_handling
             };
+
+            let mut errs = Vec::<::from::ValidationErr>::new();
 
             let mut prop;
 

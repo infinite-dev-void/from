@@ -1,5 +1,8 @@
 use proc_macro2::TokenStream as TokenStream2;
+
+use super::Tokens;
 pub struct VariableParseSegments {
+    pub required_field_errs: Tokens,
     pub field_var_defs: TokenStream2,
     pub field_parsing_arms: TokenStream2,
     pub missing_field_checks: TokenStream2,
@@ -10,11 +13,17 @@ impl VariableParseSegments {
     #[inline]
     pub fn new() -> Self {
         Self {
+            required_field_errs: Tokens::new(),
             field_var_defs: TokenStream2::new(),
             field_parsing_arms: TokenStream2::new(),
             missing_field_checks: TokenStream2::new(),
             field_assignments: TokenStream2::new(),
         }
+    }
+
+    #[inline]
+    pub fn add_required_field_err(&mut self, required_field_err: TokenStream2) {
+        self.required_field_errs.push(required_field_err);
     }
 
     #[inline]

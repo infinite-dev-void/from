@@ -15,10 +15,10 @@ impl Tokens {
         self.0.push(t);
     }
 
-    /* #[inline]
+    #[inline]
     pub fn len(&self) -> usize {
         self.0.len()
-    } */
+    }
 
     pub fn join_with_suffix(self, sep: &TokenStream2, suffix: &TokenStream2) -> TokenStream2 {
         let len = self.0.len();
@@ -52,7 +52,7 @@ impl Tokens {
         joined
     }
 
-    /* pub fn join_ref(&self, sep: &TokenStream2) -> TokenStream2 {
+    pub fn join(self, sep: TokenStream2) -> TokenStream2 {
         let len = self.0.len();
         if len == 0 {
             return TokenStream2::new();
@@ -66,19 +66,19 @@ impl Tokens {
 
         let last = self.0.len() - 1;
 
-        let mut iter = self.0.iter();
+        let mut iter = self.0.into_iter();
 
         for _ in 0..last {
             unsafe {
-                joined.extend(::core::iter::once(iter.next().unwrap_unchecked().clone()));
+                joined.extend(::core::iter::once(iter.next().unwrap_unchecked()));
             };
             joined.extend(::core::iter::once(sep.clone()));
         }
 
         unsafe {
-            joined.extend(::core::iter::once(iter.next().unwrap_unchecked().clone()));
+            joined.extend(::core::iter::once(iter.next().unwrap_unchecked()));
         };
 
         joined
-    } */
+    }
 }

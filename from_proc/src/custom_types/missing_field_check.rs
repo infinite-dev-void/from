@@ -6,11 +6,22 @@ use syn::Ident;
 
 use crate::{metas_holder::MetasHolder, utils};
 
+pub struct Check {
+    pub check: TokenStream2,
+    pub err: TokenStream2,
+}
+
+impl Check {
+    fn new(check: TokenStream2, err: TokenStream2) -> Self {
+        Self { check, err }
+    }
+}
+
 pub struct MissingFieldCheck {
-    pub none: TokenStream2,
-    pub lang: TokenStream2,
-    pub stack_errs: TokenStream2,
-    pub stack_errs_lang: TokenStream2,
+    pub none: Check,
+    pub lang: Check,
+    pub stack_errs: Check,
+    pub stack_errs_lang: Check,
 }
 
 impl MissingFieldCheck {
@@ -36,26 +47,49 @@ impl MissingFieldCheck {
         )?;
 
         Ok(Self {
-            none: quote! {
-                if #not_matching_indicator_ident {
-                    return Err(From::from(#single_msg_err));
-                };
-            },
-            lang: quote! {
-                if #not_matching_indicator_ident {
-                    return Err(From::from(#multi_msgs_err));
-                };
-            },
-            stack_errs: quote! {
-                if #not_matching_indicator_ident {
-                    errs.push(#single_msg_err);
-                };
-            },
-            stack_errs_lang: quote! {
-                if #not_matching_indicator_ident {
-                    errs.push(#multi_msgs_err);
-                };
-            },
+            none: Check::new(
+                quote! {
+                    if #not_matching_indicator_ident {
+                        return Err(From::from(#single_msg_err));
+                    };
+                },
+                quote! {
+                    #single_msg_err
+                },
+            ),
+
+            lang: Check::new(
+                quote! {
+                    if #not_matching_indicator_ident {
+                        return Err(From::from(#multi_msgs_err));
+                    };
+                },
+                quote! {
+                    #multi_msgs_err
+                },
+            ),
+
+            stack_errs: Check::new(
+                quote! {
+                    if #not_matching_indicator_ident {
+                        errs.push(#single_msg_err);
+                    };
+                },
+                quote! {
+                    #single_msg_err
+                },
+            ),
+
+            stack_errs_lang: Check::new(
+                quote! {
+                    if #not_matching_indicator_ident {
+                        errs.push(#multi_msgs_err);
+                    };
+                },
+                quote! {
+                    #multi_msgs_err
+                },
+            ),
         })
     }
 }
