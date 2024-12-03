@@ -1,6 +1,6 @@
 [package]
 name = "from"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "A procedural macro that generates custom parsing and validation code"
 authors = ["Marwan Hilal <marwan.hilal.dev@gmail.com>"]
@@ -12,5 +12,5 @@ keywords = ["parser", "validator"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-from_proc = "0.1.1"
+from_proc = "0.1.2"
 loop-code = "0.5.2"
