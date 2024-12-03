@@ -184,15 +184,15 @@ checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
 
 [[package]]
 name = "from"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
- "from_proc 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "from_proc 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "loop-code",
 ]
 
 [[package]]
 name = "from_proc"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -201,9 +201,9 @@ dependencies = [
 
 [[package]]
 name = "from_proc"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c2a3b433ccddeda96c584fdbf4563f4bfe8d3ec58e3b6649a540cac9d33d334"
+checksum = "a2a723c207dbf1490578f02f753812d11e623c6fefeed7e931b5cdfb07294583"
 dependencies = [
  "proc-macro2",
  "quote",
