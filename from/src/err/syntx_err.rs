@@ -39,4 +39,16 @@ impl SyntaxErr {
             offset: *offset,
         }
     }
+
+    #[inline]
+    pub fn to_json(&self) -> String {
+        let mut json = String::from(r#"{"msg":"#);
+        json.push_str(&super::string_to_json(&self.msg));
+        json.push(',');
+        json.push_str(r#""offset":"#);
+        json.push_str(&self.offset.to_string());
+        json.push('}');
+
+        json
+    }
 }

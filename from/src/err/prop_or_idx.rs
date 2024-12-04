@@ -4,6 +4,16 @@ pub enum PropOrIdx {
     Idx(usize),
 }
 
+impl PropOrIdx {
+    #[inline]
+    pub fn to_json(&self) -> String {
+        match self {
+            PropOrIdx::Prop(p) => String::from('"') + &p + "\"",
+            PropOrIdx::Idx(i) => i.to_string(),
+        }
+    }
+}
+
 impl From<&str> for PropOrIdx {
     #[inline]
     fn from(value: &str) -> Self {
