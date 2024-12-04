@@ -9,3 +9,6 @@ pub use validation_err::ValidationErr;
 
 mod err;
 pub use err::{Err, Errs};
+
+mod string_to_json;
+pub use string_to_json::string_to_json;
