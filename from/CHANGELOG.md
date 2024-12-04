@@ -10,3 +10,7 @@
 ## [0.1.2] - 2024-12-03
 
 - Update `from_proc` to version 0.1.2.
+
+# [0.1.3] - 2024-12-04
+
+- Add categories to Cargo.toml file.
