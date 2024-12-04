@@ -14,3 +14,8 @@
 # [0.1.3] - 2024-12-04
 
 - Add categories to Cargo.toml file.
+
+# [0.1.4] - 2024-12-04
+
+- Add ability to convert `SyntaxErr` and `ValidationErr` structs to JSON.
+- Add ability to convert `Err` and `Errs` enums to JSON.
